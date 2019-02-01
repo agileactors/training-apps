@@ -1,0 +1,71 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.1.0.RELEASE'
+}
+group = "com.agileactors"
+version = "1.0.0"
+
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
+apply from: "gradle/build-addons/checkstyle.gradle"
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-data-redis'
+    compile 'org.springframework.boot:spring-boot-starter-security'
+
+    compile 'org.postgresql:postgresql'
+    compile 'javax.xml.bind:jaxb-api'
+    compile 'org.flywaydb:flyway-core'
+
+    runtime 'org.springframework.boot:spring-boot-starter-tomcat'
+}
+
+springBoot {
+    mainClassName = 'com.agileactors.Application'
+    manifest {
+        attributes 'Start-Class': 'com.agileactors.Application'
+    }
+    buildInfo {
+        properties {
+            artifact = rootProject.name
+            name = "Training App"
+            version = version
+            group = group
+        }
+    }
+}
+
+jar {
+    baseName = rootProject.name
+    manifest {
+        attributes("Implementation-Title": "Training App", "Implementation-Version": "${project.version}")
+    }
+}
+
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = "4.10.2"
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs){
+        exclude '**/.sql'
+    }
+}

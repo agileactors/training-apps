@@ -1,0 +1,33 @@
+version: '2.3'
+
+services:
+  training-app-monolith:
+    image: "training-app-monolith:1.0"
+    cpu_shares: 2
+    depends_on:
+      training-app-monolith-db:
+        condition: service_healthy
+    environment:
+      DB_HOST: training-app-monolith-db
+      DB_PORT: 5432
+      JAVA_OPTS: "-Duser.timezone=Europe/Athens"
+    ports:
+    - "8080:8080"
+    - "8081:8081"
+
+  training-app-monolith-db:
+    image: postgres:10.4-alpine
+    command: "postgres"
+    volumes:
+    - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "trainingapp"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+    - "5432:5432"

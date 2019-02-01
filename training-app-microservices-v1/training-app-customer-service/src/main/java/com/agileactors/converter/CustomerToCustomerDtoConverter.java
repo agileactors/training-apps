@@ -1,0 +1,31 @@
+package com.agileactors.converter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
+
+import com.agileactors.date.DateProvider;
+import com.agileactors.domain.Customer;
+import com.agileactors.dto.customer.CustomerDto;
+
+@Component
+public class CustomerToCustomerDtoConverter implements Converter<Customer, CustomerDto> {
+
+    private final ConversionService conversionService;
+
+    private final DateProvider dateProvider;
+
+    @Autowired
+    public CustomerToCustomerDtoConverter(ConversionService conversionService, DateProvider dateProvider) {
+        this.conversionService = conversionService;
+        this.dateProvider = dateProvider;
+    }
+
+    @Override
+    public CustomerDto convert(Customer source) {
+
+        return new CustomerDto(source.getId(), source.getFirstName(),
+            source.getLastName(), source.getEmail(), dateProvider.toZonedDateTime(source.getCreatedAt()), source.getAddress());
+    }
+}

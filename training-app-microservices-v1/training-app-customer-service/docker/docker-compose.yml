@@ -1,0 +1,33 @@
+version: '2.3'
+
+services:
+  training-app-customer-service:
+    image: "training-app-customer-service:1.0"
+    cpu_shares: 2
+    depends_on:
+      training-app-customer-service-db:
+        condition: service_healthy
+    environment:
+      DB_HOST: training-app-customer-service-db
+      DB_PORT: 5432
+      JAVA_OPTS: "-Duser.timezone=Europe/Athens"
+    ports:
+    - "8180:8180"
+    - "8181:8181"
+
+  training-app-customer-service-db:
+    image: postgres:10.4-alpine
+    command: "postgres"
+    volumes:
+    - ./db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "customerservice"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+    - "7432:5432"
