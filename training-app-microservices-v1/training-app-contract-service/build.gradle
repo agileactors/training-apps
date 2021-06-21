@@ -45,8 +45,8 @@ springBoot {
         properties {
             artifact = rootProject.name
             name = "Training App - Contract Service"
-            version = version
-            group = group
+            version
+            group
         }
     }
 }
@@ -59,8 +59,8 @@ jar {
 }
 
 wrapper {
-    distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "4.10.2"
+    distributionType = Wrapper.DistributionType.BIN
+    gradleVersion = "6.1"
 }
 
 processResources {

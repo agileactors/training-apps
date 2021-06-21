@@ -46,8 +46,8 @@ springBoot {
         properties {
             artifact = rootProject.name
             name = "Training App"
-            version = version
-            group = group
+            version
+            group
         }
     }
 }
