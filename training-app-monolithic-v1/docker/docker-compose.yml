@@ -16,7 +16,7 @@ services:
     - "8081:8081"
 
   training-app-monolith-db:
-    image: postgres:10.4-alpine
+    image: postgres:13-alpine
     command: "postgres"
     volumes:
     - ./postgres-data:/var/lib/postgresql/data

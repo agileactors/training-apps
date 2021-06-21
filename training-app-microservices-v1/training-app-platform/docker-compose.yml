@@ -17,7 +17,7 @@ services:
       MANAGEMENT_SERVER_PORT: 8081
 
   training-app-customer-service-db:
-    image: postgres:10.4-alpine
+    image: postgres:13-alpine
     command: "postgres"
     volumes:
     - ./db-data-customer-service:/var/lib/postgresql/data
@@ -50,7 +50,7 @@ services:
       MANAGEMENT_SERVER_PORT: 8081
 
   training-app-contract-service-db:
-    image: mysql:8
+    image: mysql:8.0.25
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
     volumes:
     - ./db-data-contract-service:/var/lib/mysql
@@ -83,7 +83,7 @@ services:
       MANAGEMENT_SERVER_PORT: 8081
 
   training-app-auditlog-service-db:
-    image: postgres:10.4-alpine
+    image: postgres:13-alpine
     command: "postgres"
     volumes:
     - ./db-data-auditlog-service:/var/lib/postgresql/data
