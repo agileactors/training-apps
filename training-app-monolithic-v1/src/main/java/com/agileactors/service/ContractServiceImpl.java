@@ -15,7 +15,7 @@ import com.agileactors.dto.contract.CreateContractRequestDto;
 import com.agileactors.dto.contract.UpdateContractRequestDto;
 
 @Service
-class ContactServiceImpl implements ContractService {
+class ContractServiceImpl implements ContractService {
 
     private final ContractDao contractDao;
 
@@ -24,7 +24,7 @@ class ContactServiceImpl implements ContractService {
     private final AuditLogService auditLogService;
 
     @Autowired
-    public ContactServiceImpl(ContractDao contractDao, CustomerService customerService, AuditLogService auditLogService) {
+    public ContractServiceImpl(ContractDao contractDao, CustomerService customerService, AuditLogService auditLogService) {
         this.contractDao = contractDao;
         this.customerService = customerService;
         this.auditLogService = auditLogService;
