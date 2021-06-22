@@ -1,5 +1,5 @@
 package com.agileactors.domain;
 
 public enum ContractType {
-    LIFE, VEHICLE
+    MOBILE, FIXED
 }
