@@ -5,12 +5,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
@@ -41,7 +41,7 @@ public class User extends AbstractUpdatable<UUID> implements Comparable<User> {
     private boolean isProtected;
 
     @Column(name = "roles")
-    @Type(type = "com.agileactors.domain.StringArrayType")
+    @Type(StringArrayType.class)
     private String[] roles;
 
     @Enumerated(EnumType.STRING)
