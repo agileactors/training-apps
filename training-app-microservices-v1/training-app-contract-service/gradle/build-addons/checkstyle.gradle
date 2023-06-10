@@ -4,7 +4,7 @@ checkstyle {
     toolVersion = '8.8'
 
     reportsDir = file("$project.buildDir/checkstyleReports")
-    configDir = rootProject.file("rules")
+    configDirectory.set(rootProject.file("rules"))
     maxErrors = 0
 
 }
