@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.agileactors.data.jpa.repository.AbstractRepository;
 import com.agileactors.domain.AbstractPersistable;
 
-public abstract class AbstractDaoImpl<T extends AbstractPersistable, I extends Serializable, R extends AbstractRepository<T, I>> implements AbstractDao<T, I> {
+public abstract class AbstractDaoImpl<T extends AbstractPersistable<I>, I extends Serializable, R extends AbstractRepository<T, I>> implements AbstractDao<T, I> {
 
     protected R jpaRepository;
 
     @Autowired
-    public AbstractDaoImpl(R jpaRepository) {
+    protected AbstractDaoImpl(R jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractDaoImpl<T extends AbstractPersistable, I extends S
 
     @Override
     public T getById(I id) {
-        return jpaRepository.getOne(id);
+        return jpaRepository.getReferenceById(id);
     }
 
     @Override
