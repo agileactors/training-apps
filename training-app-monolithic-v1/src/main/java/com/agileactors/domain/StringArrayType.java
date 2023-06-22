@@ -6,18 +6,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Arrays;
 
-import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 
-public class StringArrayType implements UserType {
-
-    private final int[] arrayTypes = new int[] {Types.ARRAY};
+public class StringArrayType implements UserType<String[]> {
 
     @Override
-    public int[] sqlTypes() {
-        return arrayTypes;
+    public int getSqlType() {
+        return Types.ARRAY;
     }
 
     @Override
@@ -26,40 +24,40 @@ public class StringArrayType implements UserType {
     }
 
     @Override
-    public boolean equals(Object x, Object y) throws HibernateException {
-        return x == null ? y == null : x.equals(y);
-    }
-
-    @Override
-    public int hashCode(Object x) throws HibernateException {
-        return x == null ? 0 : x.hashCode();
-    }
-
-    @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws HibernateException, SQLException {
-        // get the first column names
-        if (names != null && names.length > 0 && rs != null && rs.getArray(names[0]) != null) {
-            String[] results = (String[]) rs.getArray(names[0]).getArray();
-            return results;
-        }
-        return null;
-    }
-
-    @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws HibernateException, SQLException {
-        // setting the column with string array
-        if (value != null && st != null) {
-            String[] castObject = (String[]) value;
-            Array array = session.connection().createArrayOf("text", castObject);
-            st.setArray(index, array);
+    public boolean equals(String[] x, String[] y) {
+        if (x instanceof String[] && y instanceof String[]) {
+            return Arrays.deepEquals(x, y);
         } else {
-            st.setNull(index, arrayTypes[0]);
+            return false;
         }
     }
 
     @Override
-    public Object deepCopy(Object value) throws HibernateException {
-        return value == null ? null : ((String[]) value).clone();
+    public int hashCode(String[] x) {
+        return Arrays.hashCode(x);
+    }
+
+    @Override
+    public String[] nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session, Object owner) throws SQLException {
+        Array array = rs.getArray(position);
+        return array != null ? (String[]) array.getArray() : null;
+    }
+
+    @Override
+    public void nullSafeSet(PreparedStatement st, String[] value, int index, SharedSessionContractImplementor session) throws SQLException {
+        if (st != null) {
+            if (value != null) {
+                Array array = session.getJdbcConnectionAccess().obtainConnection().createArrayOf("text", value);
+                st.setArray(index, array);
+            } else {
+                st.setNull(index, Types.ARRAY);
+            }
+        }
+    }
+
+    @Override
+    public String[] deepCopy(String[] value) {
+        return value != null ? Arrays.copyOf(value, value.length) : null;
     }
 
     @Override
@@ -68,17 +66,17 @@ public class StringArrayType implements UserType {
     }
 
     @Override
-    public Serializable disassemble(Object value) throws HibernateException {
-        return (Serializable) value;
+    public Serializable disassemble(String[] value) {
+        return value;
     }
 
     @Override
-    public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        return cached;
+    public String[] assemble(Serializable cached, Object owner) {
+        return (String[]) cached;
     }
 
     @Override
-    public Object replace(Object original, Object target, Object owner) throws HibernateException {
-        return original;
+    public String[] replace(String[] detached, String[] managed, Object owner) {
+        return detached;
     }
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import com.agileactors.domain.AbstractPersistable;
 
-public interface AbstractDao<T extends AbstractPersistable, I extends Serializable> {
+public interface AbstractDao<T extends AbstractPersistable<I>, I extends Serializable> {
 
     Optional<T> findById(I id);
 

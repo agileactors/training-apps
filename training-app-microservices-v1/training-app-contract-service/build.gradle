@@ -1,22 +1,16 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        mavenLocal()
-    }
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.0'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
-plugins {
-    id 'org.springframework.boot' version '2.1.0.RELEASE'
-}
+apply from: "gradle/build-addons/checkstyle.gradle"
+
 group = "com.agileactors"
 version = "1.0.0"
 
-apply plugin: 'java'
-apply plugin: 'io.spring.dependency-management'
-apply from: "gradle/build-addons/checkstyle.gradle"
-
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
@@ -24,20 +18,20 @@ repositories {
 }
 
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-    compile 'org.springframework.cloud:spring-cloud-sleuth-core:2.0.2.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    compile 'mysql:mysql-connector-java'
-    compile 'javax.xml.bind:jaxb-api'
-    compile 'org.flywaydb:flyway-core'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.flywaydb:flyway-core'
 
-    runtime 'org.springframework.boot:spring-boot-starter-tomcat'
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-tomcat'
 }
 
 springBoot {
-    mainClassName = 'com.agileactors.Application'
+    mainClass = 'com.agileactors.Application'
     manifest {
         attributes 'Start-Class': 'com.agileactors.Application'
     }
@@ -52,7 +46,7 @@ springBoot {
 }
 
 jar {
-    baseName = rootProject.name
+    archiveBaseName = rootProject.name
     manifest {
         attributes("Implementation-Title": "Training App - Contract Service", "Implementation-Version": "${project.version}")
     }
@@ -60,11 +54,6 @@ jar {
 
 wrapper {
     distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = "6.1"
+    gradleVersion = "8.1"
 }
 
-processResources {
-    from(sourceSets.main.resources.srcDirs){
-        exclude '**/.sql'
-    }
-}
