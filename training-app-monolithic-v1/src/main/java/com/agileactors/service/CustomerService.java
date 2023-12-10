@@ -1,5 +1,6 @@
 package com.agileactors.service;
 
+import com.agileactors.dto.customer.GetCustomerDto;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,13 +10,15 @@ import com.agileactors.dto.customer.UpdateCustomerRequestDto;
 
 public interface CustomerService {
 
-    List<Customer> findAll();
+  List<GetCustomerDto> findAll();
 
-    Customer getById(UUID id);
+  GetCustomerDto getById(UUID id);
 
-    Customer create(CreateCustomerRequestDto createCustomerRequestDto);
+  Customer getByIdNative(UUID id);
 
-    Customer update(UpdateCustomerRequestDto updateCustomerRequestDto);
+  GetCustomerDto create(CreateCustomerRequestDto createCustomerRequestDto);
 
-    void deleteById(UUID id);
+  GetCustomerDto update(UUID customerId, UpdateCustomerRequestDto updateCustomerRequestDto);
+
+  void deleteById(UUID id);
 }

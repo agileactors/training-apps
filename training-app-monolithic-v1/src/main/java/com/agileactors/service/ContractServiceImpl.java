@@ -1,9 +1,11 @@
 package com.agileactors.service;
 
+import com.agileactors.dto.contract.GetContractDto;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,70 +19,70 @@ import com.agileactors.dto.contract.UpdateContractRequestDto;
 @Service
 class ContractServiceImpl implements ContractService {
 
-    private final ContractDao contractDao;
+  private final ContractDao contractDao;
 
-    private final CustomerService customerService;
+  private final CustomerService customerService;
 
-    private final AuditLogService auditLogService;
+  private final AuditLogService auditLogService;
 
-    @Autowired
-    public ContractServiceImpl(ContractDao contractDao, CustomerService customerService, AuditLogService auditLogService) {
-        this.contractDao = contractDao;
-        this.customerService = customerService;
-        this.auditLogService = auditLogService;
-    }
+  private final ConversionService conversionService;
 
-    @Override
-    @Transactional
-    public List<Contract> findAll() {
-        return contractDao.findAll();
-    }
+  @Autowired
+  public ContractServiceImpl(ContractDao contractDao,
+                             CustomerService customerService,
+                             AuditLogService auditLogService,
+                             ConversionService conversionService) {
+    this.contractDao = contractDao;
+    this.customerService = customerService;
+    this.auditLogService = auditLogService;
+    this.conversionService = conversionService;
+  }
 
-    @Override
-    @Transactional
-    public Contract getById(UUID id) {
-        return contractDao.getById(id);
-    }
+  @Override
+  public List<GetContractDto> findAll() {
+    return contractDao.findAll().stream()
+        .map(contract -> conversionService.convert(contract, GetContractDto.class)).toList();
+  }
 
-    @Override
-    @Transactional
-    public void deleteById(UUID id) {
-        auditLogService.save(new CreateAuditLogRequestDto(AuditLogType.CONTRACT_DELETE, id));
-        contractDao.deleteById(id);
-    }
+  @Override
+  public GetContractDto getById(UUID id) {
+    return conversionService.convert(contractDao.getById(id), GetContractDto.class);
+  }
 
-    @Override
-    @Transactional
-    public Contract create(CreateContractRequestDto createContractRequestDto) {
-        var newContract = new Contract();
-        newContract.setId(UUID.randomUUID());
-        newContract.setName(createContractRequestDto.getName());
-        newContract.setContractType(createContractRequestDto.getContractType());
-        newContract.setCustomer(customerService.getById(createContractRequestDto.getCustomerId()));
-        newContract.setCost(createContractRequestDto.getCost());
-        newContract.setEngagementDate(createContractRequestDto.getEngagementDate().toInstant());
+  @Override
+  @Transactional
+  public void deleteById(UUID id) {
+    auditLogService.save(new CreateAuditLogRequestDto(AuditLogType.CONTRACT_DELETE, id));
+    contractDao.deleteById(id);
+  }
 
-        if (createContractRequestDto.getDeadlineDate() != null) {
-            newContract.setEndDate(createContractRequestDto.getDeadlineDate().toInstant());
-        }
-        auditLogService.save(new CreateAuditLogRequestDto(AuditLogType.CONTRACT_INIT, newContract.getId()));
-        return contractDao.save(newContract);
-    }
+  @Override
+  @Transactional
+  public GetContractDto create(CreateContractRequestDto createContractRequestDto) {
+    var newContract = new Contract(UUID.randomUUID(),
+        createContractRequestDto.getName(),
+        createContractRequestDto.getContractType(),
+        customerService.getByIdNative(createContractRequestDto.getCustomerId()),
+        createContractRequestDto.getCost(), createContractRequestDto.getEngagementDate(),
+        createContractRequestDto.getEndDate());
 
-    @Override
-    @Transactional
-    public Contract update(UpdateContractRequestDto updateContractRequestDto) {
-        var contract = getById(updateContractRequestDto.getId());
+    auditLogService.save(
+        new CreateAuditLogRequestDto(AuditLogType.CONTRACT_INIT, newContract.getId()));
+    return conversionService.convert(contractDao.save(newContract), GetContractDto.class);
+  }
 
-        contract.setName(updateContractRequestDto.getName());
-        contract.setCost(updateContractRequestDto.getCost());
-        contract.setEngagementDate(updateContractRequestDto.getEngagementDate().toInstant());
+  @Override
+  @Transactional
+  public GetContractDto update(UUID contractId, UpdateContractRequestDto updateContractRequestDto) {
+    var contract = contractDao.getById(contractId);
 
-        if (updateContractRequestDto.getEndDate() != null) {
-            contract.setEndDate(updateContractRequestDto.getEndDate().toInstant());
-        }
+    contract.setName(updateContractRequestDto.getName());
+    contract.setCost(updateContractRequestDto.getCost());
+    contract.setEngagementDate(updateContractRequestDto.getEngagementDate());
+    contract.setEndDate(updateContractRequestDto.getEndDate());
 
-        auditLogService.save(new CreateAuditLogRequestDto(AuditLogType.CONTRACT_UPDATE, contract.getId()));
-        return contract;
-    }
+    auditLogService.save(
+        new CreateAuditLogRequestDto(AuditLogType.CONTRACT_UPDATE, contract.getId()));
+    return conversionService.convert(contractDao.save(contract), GetContractDto.class);
+  }
 }

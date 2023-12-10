@@ -1,5 +1,6 @@
 package com.agileactors.service;
 
+import com.agileactors.dto.contract.GetContractDto;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,13 +10,13 @@ import com.agileactors.dto.contract.UpdateContractRequestDto;
 
 public interface ContractService {
 
-    List<Contract> findAll();
+  List<GetContractDto> findAll();
 
-    Contract getById(UUID id);
+  GetContractDto getById(UUID id);
 
-    void deleteById(UUID id);
+  void deleteById(UUID id);
 
-    Contract create(CreateContractRequestDto createContractRequestDto);
+  GetContractDto create(CreateContractRequestDto createContractRequestDto);
 
-    Contract update(UpdateContractRequestDto updateContractRequestDto);
+  GetContractDto update(UUID contractId, UpdateContractRequestDto updateContractRequestDto);
 }

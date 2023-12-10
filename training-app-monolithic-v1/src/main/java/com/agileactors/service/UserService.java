@@ -1,5 +1,6 @@
 package com.agileactors.service;
 
+import com.agileactors.dto.user.GetUserDto;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,15 +11,15 @@ import com.agileactors.exception.ApplicationException;
 
 public interface UserService {
 
-    List<User> findAll();
+  List<GetUserDto> findAll();
 
-    User findByEmail(String email);
+  GetUserDto findByEmail(String email);
 
-    User create(CreateUserRequestDto createUserRequestDto);
+  GetUserDto create(CreateUserRequestDto createUserRequestDto);
 
-    User update(UpdateUserRequestDto updateUserRequestDto);
+  GetUserDto update(UUID userId, UpdateUserRequestDto updateUserRequestDto);
 
-    User findById(UUID id);
+  GetUserDto findById(UUID id);
 
-    void deleteById(UUID id) throws ApplicationException;
+  void deleteById(UUID id) throws ApplicationException;
 }

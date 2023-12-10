@@ -6,46 +6,46 @@ buildscript {
 }
 
 plugins {
-    id 'org.springframework.boot' version '2.1.0.RELEASE'
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 group = "com.agileactors"
 version = "1.0.0"
 
-apply plugin: 'java'
-apply plugin: 'io.spring.dependency-management'
 apply from: "gradle/build-addons/checkstyle.gradle"
-
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
     mavenLocal()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-    compile 'org.springframework.boot:spring-boot-starter-data-redis'
-    compile 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.cloud:spring-cloud-sleuth-core:2.2.8.RELEASE'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-62:3.6.0'
 
-    compile 'org.postgresql:postgresql'
-    compile 'javax.xml.bind:jaxb-api'
-    compile 'org.flywaydb:flyway-core'
+    implementation 'javax.xml.bind:jaxb-api:2.3.0'
 
-    runtime 'org.springframework.boot:spring-boot-starter-tomcat'
+    implementation 'org.postgresql:postgresql'
+    implementation 'org.flywaydb:flyway-core'
 }
 
 springBoot {
-    mainClassName = 'com.agileactors.Application'
-    manifest {
-        attributes 'Start-Class': 'com.agileactors.Application'
-    }
     buildInfo {
         properties {
             artifact = rootProject.name
-            name = "Training App"
+            name = "${projectTitle}"
             version
             group
         }
@@ -53,19 +53,16 @@ springBoot {
 }
 
 jar {
-    baseName = rootProject.name
+    enabled = false
     manifest {
-        attributes("Implementation-Title": "Training App", "Implementation-Version": "${project.version}")
+        attributes["Implementation-Version"] = "${project.version}"
+        attributes["Implementation-Title"] = "${projectTitle}"
     }
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }
-
-wrapper {
-    distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = "6.1"
-}
-
 processResources {
-    from(sourceSets.main.resources.srcDirs){
+    from(sourceSets.main.resources.srcDirs) {
         exclude '**/.sql'
     }
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }

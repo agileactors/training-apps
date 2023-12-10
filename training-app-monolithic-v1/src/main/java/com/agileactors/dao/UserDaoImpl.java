@@ -9,12 +9,12 @@ import com.agileactors.domain.User;
 
 @Component
 class UserDaoImpl extends AbstractDaoImpl<User, UUID, UserRepository> implements UserDao {
-    public UserDaoImpl(UserRepository jpaRepository) {
-        super(jpaRepository);
-    }
+  public UserDaoImpl(UserRepository jpaRepository) {
+    super(jpaRepository);
+  }
 
-    @Override
-    public User findByEmail(String email) {
-        return jpaRepository.findByEmail(email);
-    }
+  @Override
+  public User findByEmail(String email) {
+    return jpaRepository.findByEmail(email);
+  }
 }

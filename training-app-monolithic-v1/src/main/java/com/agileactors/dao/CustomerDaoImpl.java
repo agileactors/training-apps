@@ -8,8 +8,9 @@ import com.agileactors.data.jpa.repository.CustomerRepository;
 import com.agileactors.domain.Customer;
 
 @Component
-class CustomerDaoImpl extends AbstractDaoImpl<Customer, UUID, CustomerRepository> implements CustomerDao {
-    public CustomerDaoImpl(CustomerRepository jpaRepository) {
-        super(jpaRepository);
-    }
+class CustomerDaoImpl extends AbstractDaoImpl<Customer, UUID, CustomerRepository>
+    implements CustomerDao {
+  public CustomerDaoImpl(CustomerRepository jpaRepository) {
+    super(jpaRepository);
+  }
 }

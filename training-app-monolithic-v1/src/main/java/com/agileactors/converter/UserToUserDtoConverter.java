@@ -1,27 +1,18 @@
 package com.agileactors.converter;
 
+import com.agileactors.domain.User;
+import com.agileactors.dto.user.GetUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import com.agileactors.date.DateProvider;
-import com.agileactors.domain.User;
-import com.agileactors.dto.user.UserDto;
-
 @Component
-public class UserToUserDtoConverter implements Converter<User, UserDto> {
+public class UserToUserDtoConverter implements Converter<User, GetUserDto> {
 
-    private final DateProvider dateProvider;
-
-    @Autowired
-    public UserToUserDtoConverter(DateProvider dateProvider) {
-        this.dateProvider = dateProvider;
-    }
-
-    @Override
-    public UserDto convert(User source) {
-        return new UserDto(source.getId(), source.getEmail(), source.getName(), source.getLastName(),
-            source.isActive(), dateProvider.toZonedDateTime(source.getCreatedAt()),
-            source.getRoles(), source.isProtected(), source.getUserType());
-    }
+  @Override
+  public GetUserDto convert(User source) {
+    return new GetUserDto(source.getId(), source.getEmail(), source.getName(), source.getLastName(),
+        source.isActive(), source.getCreatedAt(),
+        source.getRoles(), source.isProtected(), source.getUserType());
+  }
 }

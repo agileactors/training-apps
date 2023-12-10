@@ -8,21 +8,21 @@ import com.agileactors.domain.AbstractPersistable;
 
 public interface AbstractDao<T extends AbstractPersistable, I extends Serializable> {
 
-    Optional<T> findById(I id);
+  Optional<T> findById(I id);
 
-    List<T> findAll();
+  List<T> findAll();
 
-    List<T> findAllById(Iterable<I> ids);
+  List<T> findAllById(Iterable<I> ids);
 
-    T getById(I id);
+  T getById(I id);
 
-    T save(T entity);
+  T save(T entity);
 
-    T saveAndFlush(T entity);
+  T saveAndFlush(T entity);
 
-    List<T> saveAll(List<T> entities);
+  List<T> saveAll(List<T> entities);
 
-    void deleteById(I id);
+  void deleteById(I id);
 
-    void delete(T entity);
+  void delete(T entity);
 }

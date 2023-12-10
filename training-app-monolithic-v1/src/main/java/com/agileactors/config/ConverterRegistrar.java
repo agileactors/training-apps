@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 final class ConverterRegistrar {
 
-    @Autowired
-    ConverterRegistrar(Optional<List<Converter>> converters, ConverterRegistry converterRegistry) {
-        converters.ifPresent(c -> c.forEach(converterRegistry::addConverter));
-    }
+  @Autowired
+  ConverterRegistrar(Optional<List<Converter>> converters, ConverterRegistry converterRegistry) {
+    converters.ifPresent(c -> c.forEach(converterRegistry::addConverter));
+  }
 }

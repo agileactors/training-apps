@@ -6,9 +6,10 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.cache.annotation.EnableCaching;
 
 @EnableCaching
-@SpringBootApplication(exclude = SecurityAutoConfiguration.class, scanBasePackages = {"com.agileactors"})
+@SpringBootApplication(exclude = SecurityAutoConfiguration.class, scanBasePackages = {
+    "com.agileactors"})
 public class Application {
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
 }

@@ -62,7 +62,7 @@ WITH (
 
 INSERT INTO users
 (user_id, created_at, updated_at, active, email, "name", last_name, password, protected, user_type, roles)
-VALUES('8f57ed62-4ec8-4132-ba13-99c3ce098868', now(), now(), true, 'admin@agileactors.com', 'Super',' Admin', '$2a$10$nim1Yj/Xkux/dWycETl4pu27MVy/.3uwn3.b9GT28RmCuf.l8li66', true, 'SUPER_ADMIN',
+VALUES('8f57ed62-4ec8-4132-ba13-99c3ce098868', now(), now(), true, 'admin@agileactors.com', 'Super',' Admin', '$2a$10$C2iG0IWESa8E/prPAbdpAOLju3WVYv31frFGdxlfnbihic843OVTe', true, 'SUPER_ADMIN',
 '{  "CUSTOMERS_READ",
     "CUSTOMERS_WRITE",
     "CONTRACTS_READ",

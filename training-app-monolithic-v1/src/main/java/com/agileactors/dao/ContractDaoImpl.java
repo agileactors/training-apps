@@ -8,8 +8,9 @@ import com.agileactors.data.jpa.repository.ContractRepository;
 import com.agileactors.domain.Contract;
 
 @Component
-class ContractDaoImpl extends AbstractDaoImpl<Contract, UUID, ContractRepository> implements ContractDao {
-    public ContractDaoImpl(ContractRepository jpaRepository) {
-        super(jpaRepository);
-    }
+class ContractDaoImpl extends AbstractDaoImpl<Contract, UUID, ContractRepository>
+    implements ContractDao {
+  public ContractDaoImpl(ContractRepository jpaRepository) {
+    super(jpaRepository);
+  }
 }

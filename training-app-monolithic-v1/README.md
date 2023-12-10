@@ -6,10 +6,10 @@ a relational database.
 
 ### Software Stack
 
-1. Java 11
-2. Gradle 4.10.x
-3. Spring Boot
-4. Spring Security
+1. Java 17
+2. Gradle 8.5
+3. Spring Boot 3.2.x
+4. Spring Security 
 5. JPA - Hibernate (ORM)
 6. Flyway (Database Bootstrapping)
 7. Postgres (Database)
