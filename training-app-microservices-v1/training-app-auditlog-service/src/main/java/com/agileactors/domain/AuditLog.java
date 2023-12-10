@@ -1,49 +1,45 @@
 package com.agileactors.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 import java.util.UUID;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
 
 @Entity
 public class AuditLog extends AbstractUpdatable<UUID> {
-    @Id
-    @Column(name = "audit_log_id")
-    private UUID id;
+  @Id
+  @Column(name = "audit_log_id")
+  private UUID id;
 
-    @Column(name = "audit_log_type")
-    @Enumerated(EnumType.STRING)
-    private AuditLogType auditLogType;
+  @Column(name = "audit_log_type")
+  @Enumerated(EnumType.STRING)
+  private AuditLogType auditLogType;
 
-    @Column(name = "resource_id")
-    private UUID resourceId;
+  @Column(name = "resource_id")
+  private UUID resourceId;
 
-    @Override
-    public UUID getId() {
-        return id;
-    }
+  public AuditLog(UUID id, AuditLogType auditLogType, UUID resourceId) {
+    this.id = id;
+    this.auditLogType = auditLogType;
+    this.resourceId = resourceId;
+  }
 
-    @Override
-    public void setId(UUID id) {
-        this.id = id;
-    }
+  protected AuditLog() {
+  }
 
-    public AuditLogType getAuditLogType() {
-        return auditLogType;
-    }
+  @Override
+  public UUID getId() {
+    return id;
+  }
 
-    public void setAuditLogType(AuditLogType auditLogType) {
-        this.auditLogType = auditLogType;
-    }
+  public AuditLogType getAuditLogType() {
+    return auditLogType;
+  }
 
-    public UUID getResourceId() {
-        return resourceId;
-    }
+  public UUID getResourceId() {
+    return resourceId;
+  }
 
-    public void setResourceId(UUID resourceId) {
-        this.resourceId = resourceId;
-    }
 }

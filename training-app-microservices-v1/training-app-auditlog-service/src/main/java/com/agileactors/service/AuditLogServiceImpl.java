@@ -1,38 +1,39 @@
 package com.agileactors.service;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.agileactors.dao.AuditLogDao;
 import com.agileactors.domain.AuditLog;
 import com.agileactors.dto.audit.CreateAuditLogRequestDto;
+import com.agileactors.dto.audit.GetAuditLogDto;
+import java.util.List;
+import java.util.UUID;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 class AuditLogServiceImpl implements AuditLogService {
 
-    private final AuditLogDao auditLogDao;
+  private final AuditLogDao auditLogDao;
+  private final ConversionService conversionService;
 
-    @Autowired
-    public AuditLogServiceImpl(AuditLogDao auditLogDao) {
-        this.auditLogDao = auditLogDao;
-    }
+  public AuditLogServiceImpl(AuditLogDao auditLogDao, ConversionService conversionService) {
+    this.auditLogDao = auditLogDao;
+    this.conversionService = conversionService;
+  }
 
-    @Override
-    @Transactional
-    public AuditLog save(CreateAuditLogRequestDto createAuditLogRequestDto) {
-        var auditLog = new AuditLog();
-        auditLog.setId(UUID.randomUUID());
-        auditLog.setAuditLogType(createAuditLogRequestDto.getAuditLogType());
-        auditLog.setResourceId(createAuditLogRequestDto.getResourceId());
-        return auditLogDao.save(auditLog);
-    }
+  @Override
+  @Transactional
+  public GetAuditLogDto save(CreateAuditLogRequestDto createAuditLogRequestDto) {
+    var auditLog = new AuditLog(UUID.randomUUID(), createAuditLogRequestDto.auditLogType(),
+        createAuditLogRequestDto.resourceId());
 
-    @Override
-    public List<AuditLog> findAll() {
-        return auditLogDao.findAll();
-    }
+    return conversionService.convert(auditLogDao.save(auditLog), GetAuditLogDto.class);
+  }
+
+  @Override
+  public List<GetAuditLogDto> findAll() {
+    return auditLogDao.findAll().stream()
+        .map(auditLog -> conversionService.convert(auditLog, GetAuditLogDto.class)).toList();
+  }
 }

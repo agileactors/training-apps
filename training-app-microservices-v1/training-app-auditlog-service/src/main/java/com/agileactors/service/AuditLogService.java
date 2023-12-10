@@ -1,14 +1,13 @@
 package com.agileactors.service;
 
-import java.util.List;
-
-import com.agileactors.domain.AuditLog;
 import com.agileactors.dto.audit.CreateAuditLogRequestDto;
+import com.agileactors.dto.audit.GetAuditLogDto;
+import java.util.List;
 
 public interface AuditLogService {
 
-    AuditLog save(CreateAuditLogRequestDto createAuditLogRequestDto);
+  GetAuditLogDto save(CreateAuditLogRequestDto createAuditLogRequestDto);
 
-    List<AuditLog> findAll();
+  List<GetAuditLogDto> findAll();
 
 }
