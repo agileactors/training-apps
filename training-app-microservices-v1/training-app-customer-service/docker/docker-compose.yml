@@ -18,7 +18,7 @@ services:
     - "8181:8181"
 
   training-app-customer-service-db:
-    image: postgres:10.4-alpine
+    image: postgres:16-alpine
     command: "postgres"
     volumes:
     - ./db-data:/var/lib/postgresql/data

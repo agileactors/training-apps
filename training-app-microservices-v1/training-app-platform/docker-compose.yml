@@ -20,18 +20,18 @@ services:
     image: postgres:16-alpine
     command: "postgres"
     volumes:
-    - ./db-data-customer-service:/var/lib/postgresql/data
+      - ./db-data-customer-service:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "customerservice"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
     ports:
-    - "7432:5432"
+      - "7432:5432"
   # Customer Service End
 
   # Contract Service Start
@@ -50,10 +50,10 @@ services:
       MANAGEMENT_SERVER_PORT: 8081
 
   training-app-contract-service-db:
-    image: mysql:8.0.25
+    image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
     volumes:
-    - ./db-data-contract-service:/var/lib/mysql
+      - ./db-data-contract-service:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: "rootpass"
       MYSQL_DATABASE: "contractservice"
@@ -63,7 +63,7 @@ services:
       timeout: 120s
       retries: 10
     ports:
-    - "3306:3306"
+      - "3306:3306"
 
   # Contract Service End
 
@@ -86,27 +86,27 @@ services:
     image: postgres:16-alpine
     command: "postgres"
     volumes:
-    - ./db-data-auditlog-service:/var/lib/postgresql/data
+      - ./db-data-auditlog-service:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "auditlog"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
     ports:
-    - "8432:5432"
+      - "8432:5432"
 
   # Audit Log Service End
 
   # Nginx
   nginx:
     depends_on:
-    - training-app-contract-service
-    - training-app-customer-service
-    - training-app-auditlog-service
+      - training-app-contract-service
+      - training-app-customer-service
+      - training-app-auditlog-service
     image: nginx:alpine
     restart: always
     volumes:
