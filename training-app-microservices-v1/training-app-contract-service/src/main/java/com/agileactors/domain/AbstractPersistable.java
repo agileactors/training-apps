@@ -1,37 +1,30 @@
 package com.agileactors.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import java.io.Serializable;
 import java.time.Instant;
-
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
 
 @MappedSuperclass
 public abstract class AbstractPersistable<T> implements Serializable {
 
-    @Column(name = "created_at", updatable = false, nullable = false)
-    protected Instant createdAt;
+  @Column(name = "created_at", updatable = false, nullable = false)
+  protected Instant createdAt;
 
-    public abstract T getId();
+  public abstract T getId();
 
-    public abstract void setId(T id);
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
 
-    public Instant getCreatedAt() {
-        return createdAt;
+  @PrePersist
+  public void onPrePersist() {
+    // Inject clock instance
+    Instant now = Instant.now();
+    if (createdAt == null) {
+      createdAt = now;
     }
-
-    protected void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    @PrePersist
-    public void onPrePersist() {
-        // Inject clock instance
-        Instant now = Instant.now();
-        if (createdAt == null) {
-            createdAt = now;
-        }
-    }
+  }
 
 }

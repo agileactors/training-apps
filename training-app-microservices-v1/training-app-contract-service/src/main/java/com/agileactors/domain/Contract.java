@@ -1,96 +1,93 @@
 package com.agileactors.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 import java.time.Instant;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 @Entity
 public class Contract extends AbstractUpdatable<UUID> {
-    @Id
-    @Column(name = "contract_id")
-    private UUID id;
+  @Id
+  @Column(name = "contract_id")
+  private UUID id;
 
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
+  @Column(name = "name", nullable = false, unique = true)
+  private String name;
 
-    @Column(name = "contract_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ContractType contractType;
+  @Enumerated(EnumType.STRING)
+  private ContractType contractType;
 
-    @Column(name = "customer_id", nullable = false)
-    private UUID customerId;
+  private Long cost;
 
-    @Column(name = "cost", nullable = false)
-    private Long cost;
+  private Instant engagementDate;
 
-    @Column(name = "engagement_date", nullable = false)
-    private Instant engagementDate;
+  private Instant endDate;
 
-    @Column(name = "end_date")
-    private Instant endDate;
+  private UUID customerId;
 
-    public UUID getCustomerId() {
-        return customerId;
-    }
+  protected Contract() {
+  }
 
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
-    }
+  public Contract(UUID id, String name, ContractType contractType, Long cost,
+                  Instant engagementDate, Instant endDate, UUID customerId) {
+    this.id = id;
+    this.name = name;
+    this.contractType = contractType;
+    this.cost = cost;
+    this.engagementDate = engagementDate;
+    this.endDate = endDate;
+    this.customerId = customerId;
+  }
 
-    public ContractType getContractType() {
-        return contractType;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setContractType(ContractType contractType) {
-        this.contractType = contractType;
-    }
+  public void setContractType(ContractType contractType) {
+    this.contractType = contractType;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setCost(Long cost) {
+    this.cost = cost;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setEngagementDate(Instant engagementDate) {
+    this.engagementDate = engagementDate;
+  }
 
-    public Long getCost() {
-        return cost;
-    }
+  public void setEndDate(Instant endDate) {
+    this.endDate = endDate;
+  }
 
-    public void setCost(Long cost) {
-        this.cost = cost;
-    }
+  public ContractType getContractType() {
+    return contractType;
+  }
 
-    public Instant getEngagementDate() {
-        return engagementDate;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setEngagementDate(Instant engagementDate) {
-        this.engagementDate = engagementDate;
-    }
+  public Long getCost() {
+    return cost;
+  }
 
-    public Instant getEndDate() {
-        return endDate;
-    }
+  public Instant getEngagementDate() {
+    return engagementDate;
+  }
 
-    public void setEndDate(Instant endDate) {
-        this.endDate = endDate;
-    }
+  public Instant getEndDate() {
+    return endDate;
+  }
 
-    @Override
-    public UUID getId() {
-        return id;
-    }
+  public UUID getCustomerId() {
+    return customerId;
+  }
 
-    @Override
-    public void setId(UUID id) {
-        this.id = id;
-    }
+  @Override
+  public UUID getId() {
+    return id;
+  }
 }

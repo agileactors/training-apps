@@ -17,7 +17,7 @@ services:
       MANAGEMENT_SERVER_PORT: 8081
 
   training-app-customer-service-db:
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     command: "postgres"
     volumes:
     - ./db-data-customer-service:/var/lib/postgresql/data
@@ -83,7 +83,7 @@ services:
       MANAGEMENT_SERVER_PORT: 8081
 
   training-app-auditlog-service-db:
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     command: "postgres"
     volumes:
     - ./db-data-auditlog-service:/var/lib/postgresql/data

@@ -11,6 +11,8 @@ services:
       DB_HOST: training-app-customer-service-db
       DB_PORT: 5432
       JAVA_OPTS: "-Duser.timezone=Europe/Athens"
+      SERVER-PORT: 8080
+      MANAGEMENT_SERVER-PORT: 8180
     ports:
     - "8180:8180"
     - "8181:8181"

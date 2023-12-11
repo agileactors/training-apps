@@ -1,8 +1,8 @@
 package com.agileactors.dao;
 
-import com.agileactors.dto.audit.AuditLogDto;
 import com.agileactors.dto.audit.CreateAuditLogRequestDto;
+import com.agileactors.dto.audit.GetAuditLogDto;
 
 public interface AuditLogDao {
-    AuditLogDto create(CreateAuditLogRequestDto createAuditLogRequestDto);
+  GetAuditLogDto create(CreateAuditLogRequestDto createAuditLogRequestDto);
 }

@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM amazoncorretto:17-alpine
 
 COPY docker-entrypoint.sh /
 COPY *.jar /usr/local/lib/service.jar

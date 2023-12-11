@@ -6,65 +6,69 @@ buildscript {
 }
 
 plugins {
-    id 'org.springframework.boot' version '2.1.0.RELEASE'
+    id 'java'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 group = "com.agileactors"
 version = "1.0.0"
 
-apply plugin: 'java'
-apply plugin: 'io.spring.dependency-management'
 apply from: "gradle/build-addons/checkstyle.gradle"
-
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
     mavenLocal()
 }
 
-dependencies {
-    compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-    compile 'org.springframework.cloud:spring-cloud-sleuth-core:2.0.2.RELEASE'
-
-    compile 'org.postgresql:postgresql'
-    compile 'javax.xml.bind:jaxb-api'
-    compile 'org.flywaydb:flyway-core'
-
-    runtime 'org.springframework.boot:spring-boot-starter-tomcat'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
-springBoot {
-    mainClassName = 'com.agileactors.Application'
-    manifest {
-        attributes 'Start-Class': 'com.agileactors.Application'
-    }
-    buildInfo {
-        properties {
-            artifact = rootProject.name
-            name = "Training App - Customer Service"
-            version
-            group
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.cloud:spring-cloud-sleuth-core:2.2.8.RELEASE'
+
+    implementation 'javax.xml.bind:jaxb-api:2.3.0'
+
+    implementation 'org.postgresql:postgresql'
+    implementation 'org.flywaydb:flyway-core'
+}
+
+tasks {
+
+    springBoot {
+        manifest {
+            attributes 'Start-Class': 'com.agileactors.Application'
+        }
+        buildInfo {
+            properties {
+                artifact = rootProject.name
+                name = "${projectTitle}"
+                version
+                group
+            }
         }
     }
-}
 
-jar {
-    baseName = rootProject.name
-    manifest {
-        attributes("Implementation-Title": "Training App - Customer Service", "Implementation-Version": "${project.version}")
+    jar {
+        enabled = false
+        manifest {
+            attributes["Implementation-Version"] = "${project.version}"
+            attributes["Implementation-Title"] = "${projectTitle}"
+        }
     }
-}
-
-wrapper {
-    distributionType = Wrapper.DistributionType.BIN
-    gradleVersion = "6.1"
-}
-
-processResources {
-    from(sourceSets.main.resources.srcDirs){
-        exclude '**/.sql'
+    processResources {
+        from("src/main/resources") {
+            exclude("**/*.sql", "**/*.yml")
+        }
+        duplicatesStrategy = DuplicatesStrategy.WARN
+    }
+    bootJar {
+        duplicatesStrategy = DuplicatesStrategy.WARN
     }
 }

@@ -2,27 +2,28 @@ package com.agileactors.dao;
 
 import java.net.URL;
 import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class ContractDaoImpl implements ContractDao {
+class ContractDaoImpl implements ContractDao {
 
-    @Value("${contract.service.api.url}")
-    private URL contractServiceUrl;
+  private final URL contractServiceUrl;
 
-    private final RestTemplate customerRestTemplate;
+  private final RestTemplate contractRestTemplate;
 
-    @Autowired
-    public ContractDaoImpl(RestTemplate customerRestTemplate) {
-        this.customerRestTemplate = customerRestTemplate;
-    }
+  @Autowired
+  public ContractDaoImpl(RestTemplate contractRestTemplate,
+                         @Value("${contract.service.api.url}") URL contractServiceUrl) {
+    this.contractRestTemplate = contractRestTemplate;
+    this.contractServiceUrl = contractServiceUrl;
+  }
 
-    @Override
-    public void deleteByCustomerId(UUID customerId) {
-        customerRestTemplate.delete(contractServiceUrl.toString() + "/contracts/customers/{customerId}", customerId);
-    }
+  @Override
+  public void deleteContractsByCustomerId(UUID customerId) {
+    contractRestTemplate.delete(contractServiceUrl.toString() + "/contracts/customers/{customerId}",
+        customerId);
+  }
 }

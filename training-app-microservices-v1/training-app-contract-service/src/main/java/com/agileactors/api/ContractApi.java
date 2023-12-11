@@ -1,106 +1,66 @@
 package com.agileactors.api;
 
-import java.util.ArrayList;
+import com.agileactors.dto.contract.CreateContractRequestDto;
+import com.agileactors.dto.contract.GetContractDto;
+import com.agileactors.dto.contract.UpdateContractRequestDto;
+import com.agileactors.service.ContractService;
+import jakarta.annotation.security.RolesAllowed;
 import java.util.List;
 import java.util.UUID;
-
-import javax.annotation.security.RolesAllowed;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.agileactors.domain.Contract;
-import com.agileactors.dto.contract.ContractDto;
-import com.agileactors.dto.contract.CreateContractRequestDto;
-import com.agileactors.dto.contract.UpdateContractRequestDto;
-import com.agileactors.service.ContractService;
-
 @RestController
-public class ContractApi {
+@RequestMapping("/contracts")
+class ContractApi {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ContractApi.class);
+  private final ContractService contractService;
 
-    private final ContractService contractService;
+  public ContractApi(ContractService contractService) {
+    this.contractService = contractService;
+  }
 
-    private final ConversionService conversionService;
+  @GetMapping
+  @ResponseBody
+  @RolesAllowed("CONTRACTS_READ")
+  public List<GetContractDto> findAll() {
+    return contractService.findAll();
+  }
 
-    @Autowired
-    public ContractApi(ContractService contractService, ConversionService conversionService) {
-        this.contractService = contractService;
-        this.conversionService = conversionService;
-    }
+  @GetMapping("{id}")
+  @ResponseBody
+  @RolesAllowed("CONTRACTS_READ")
+  public GetContractDto getById(@PathVariable UUID id) {
+    return contractService.getById(id);
+  }
 
-    @GetMapping("/contracts")
-    @ResponseBody
-    @RolesAllowed("CONTRACTS_READ")
-    public List<ContractDto> findAll() {
+  @PostMapping
+  @RolesAllowed("CONTRACTS_WRITE")
+  public GetContractDto create(@RequestBody CreateContractRequestDto createContractRequestDto) {
+    return contractService.create(createContractRequestDto);
+  }
 
-        LOGGER.info("ContractApi.findAll() - Start");
+  @PutMapping("/{contractId}")
+  @RolesAllowed("CONTRACTS_WRITE")
+  public GetContractDto update(@PathVariable UUID contractId,
+                               @RequestBody UpdateContractRequestDto updateContractRequestDto) {
+    return contractService.update(contractId, updateContractRequestDto);
+  }
 
-        var contracts = contractService.findAll();
-
-        var results = new ArrayList<ContractDto>(contracts.size());
-
-        contracts.forEach(result -> results.add(convert(result)));
-
-        LOGGER.info("ContractApi.findAll() - End");
-
-        return results;
-    }
-
-    @GetMapping("/contracts/{id}")
-    @ResponseBody
-    @RolesAllowed("CONTRACTS_READ")
-    public ContractDto getById(@PathVariable UUID id) {
-        LOGGER.info("ContractApi.getById({}) - Start", id);
-
-        var result = convert(contractService.getById(id));
-
-        LOGGER.info("ContractApi.getById({}) - End", id);
-
-        return result;
-    }
-
-    @PostMapping("/contracts")
-    @RolesAllowed("CONTRACTS_WRITE")
-    public ContractDto create(@RequestBody CreateContractRequestDto createContractRequestDto) {
-        return convert(contractService.create(createContractRequestDto));
-    }
-
-    @PutMapping("/contracts")
-    @RolesAllowed("CONTRACTS_WRITE")
-    public ContractDto update(@RequestBody UpdateContractRequestDto updateContractRequestDto) {
-        return convert(contractService.update(updateContractRequestDto));
-    }
-
-    @DeleteMapping("/contracts/{id}")
-    @RolesAllowed("CONTRACTS_WRITE")
-    public void delete(@PathVariable UUID id) {
-        LOGGER.info("ContractApi.delete({}) - Start", id);
-        contractService.deleteById(id);
-        LOGGER.info("ContractApi.delete({}) - End", id);
-    }
-
-    @DeleteMapping("/contracts/customers/{customerId}")
-    @RolesAllowed("CONTRACTS_WRITE")
-    public void deleteByCustomerId(@PathVariable UUID customerId) {
-        LOGGER.info("ContractApi.deleteByCustomerId({}) - Start", customerId);
-        contractService.deleteByCustomerId(customerId);
-        LOGGER.info("ContractApi.deleteByCustomerId({}) - End", customerId);
-    }
-
-    private ContractDto convert(Contract project) {
-        return conversionService.convert(project, ContractDto.class);
-    }
+  @DeleteMapping("{id}")
+  @RolesAllowed("CONTRACTS_WRITE")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable UUID id) {
+    contractService.deleteById(id);
+  }
 
 }
