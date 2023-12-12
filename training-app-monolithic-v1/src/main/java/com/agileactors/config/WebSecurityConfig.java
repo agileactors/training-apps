@@ -29,6 +29,7 @@ public class WebSecurityConfig {
   public SecurityFilterChain configure(HttpSecurity http) throws Exception {
     return http.authorizeRequests()
         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/actuator/**").permitAll()
         .anyRequest().fullyAuthenticated()
         .and().csrf(AbstractHttpConfigurer::disable)
         .sessionManagement(
