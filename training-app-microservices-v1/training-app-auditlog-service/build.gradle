@@ -35,6 +35,8 @@ dependencies {
 
     implementation 'javax.xml.bind:jaxb-api:2.3.0'
 
+    implementation 'org.springframework.kafka:spring-kafka'
+
     implementation 'org.postgresql:postgresql'
     implementation 'org.flywaydb:flyway-core'
 
@@ -45,9 +47,6 @@ dependencies {
 tasks {
 
     springBoot {
-        manifest {
-            attributes 'Start-Class': 'com.agileactors.Application'
-        }
         buildInfo {
             properties {
                 artifact = rootProject.name

@@ -12,14 +12,14 @@ services:
       DB_PORT: 3306
       JAVA_OPTS: "-Duser.timezone=Europe/Athens"
     ports:
-    - "8080:8080"
-    - "8081:8081"
+      - "8080:8080"
+      - "8081:8081"
 
   training-app-contract-service-db:
     image: mysql:8.0
     command: --default-authentication-plugin=caching_sha2_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
     volumes:
-    - ./db-data:/var/lib/mysql
+      - ./db-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: "rootpass"
       MYSQL_DATABASE: "contractservice"
@@ -29,4 +29,12 @@ services:
       timeout: 60s
       retries: 10
     ports:
-    - "3306:3306"
+      - "3306:3306"
+
+  training-app-kafka-service:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    ports:
+      - 9081:8081
+      - 9082:8082
+      - 9092:9092
+      - 9644:9644

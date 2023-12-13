@@ -2,12 +2,15 @@ package com.agileactors.service;
 
 import com.agileactors.dao.AuditLogDao;
 import com.agileactors.dao.ContractDao;
+import com.agileactors.dao.PlatformEventProducer;
 import com.agileactors.domain.Contract;
 import com.agileactors.dto.audit.AuditLogType;
 import com.agileactors.dto.audit.CreateAuditLogRequestDto;
 import com.agileactors.dto.contract.CreateContractRequestDto;
 import com.agileactors.dto.contract.GetContractDto;
 import com.agileactors.dto.contract.UpdateContractRequestDto;
+import com.agileactors.dto.event.PlatformEvent;
+import com.agileactors.dto.event.PlatformEventType;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +27,17 @@ class ContractServiceImpl implements ContractService {
 
   private final ConversionService conversionService;
 
+  private final PlatformEventProducer platformEventProducer;
+
   @Autowired
   public ContractServiceImpl(ContractDao contractDao,
                              AuditLogDao auditLogDao,
-                             ConversionService conversionService) {
+                             ConversionService conversionService,
+                             PlatformEventProducer platformEventProducer) {
     this.contractDao = contractDao;
     this.auditLogDao = auditLogDao;
     this.conversionService = conversionService;
+    this.platformEventProducer = platformEventProducer;
   }
 
   @Override
@@ -60,9 +67,16 @@ class ContractServiceImpl implements ContractService {
         createContractRequestDto.cost(), createContractRequestDto.engagementDate(),
         createContractRequestDto.endDate(), createContractRequestDto.customerId());
 
-    auditLogDao.create(
-        new CreateAuditLogRequestDto(AuditLogType.CONTRACT_INIT, newContract.getId()));
-    return conversionService.convert(contractDao.save(newContract), GetContractDto.class);
+//    auditLogDao.create(
+//        new CreateAuditLogRequestDto(AuditLogType.CONTRACT_INIT, newContract.getId()));
+
+    var newGetContractDto =
+        conversionService.convert(contractDao.save(newContract), GetContractDto.class);
+
+    platformEventProducer.recordContractPlatformEvent(
+        new PlatformEvent<>(newGetContractDto, PlatformEventType.CONTRACT_CREATED));
+
+    return newGetContractDto;
   }
 
   @Override
