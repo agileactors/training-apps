@@ -7,6 +7,8 @@ services:
     depends_on:
       training-app-auditlog-service-db:
         condition: service_healthy
+      training-app-auditlog-kafka-service:
+        condition: service_healthy
     environment:
       DB_HOST: training-app-auditlog-service-db
       DB_PORT: 5432
@@ -33,3 +35,17 @@ services:
       retries: 5
     ports:
       - "8432:5432"
+
+  training-app-auditlog-kafka-service:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    healthcheck:
+      test: [ "CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1" ]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    ports:
+      - 9081:8081
+      - 9082:8082
+      - 9092:9092
+      - 9644:9644

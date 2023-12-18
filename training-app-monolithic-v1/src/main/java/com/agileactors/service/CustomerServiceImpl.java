@@ -35,7 +35,9 @@ class CustomerServiceImpl implements CustomerService {
   @Override
   public List<GetCustomerDto> findAll() {
     return customerDao.findAll().stream()
-        .map(customer -> conversionService.convert(customer, GetCustomerDto.class)).toList();
+        .map(customer ->
+            conversionService.
+                convert(customer, GetCustomerDto.class)).toList();
   }
 
   @Override
@@ -83,5 +85,6 @@ class CustomerServiceImpl implements CustomerService {
   public void deleteById(UUID id) {
     auditLogService.save(new CreateAuditLogRequestDto(AuditLogType.CUSTOMER_DELETE, id));
     customerDao.deleteById(id);
+
   }
 }

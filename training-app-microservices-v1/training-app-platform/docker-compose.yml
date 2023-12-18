@@ -37,8 +37,9 @@ services:
   # Contract Service Start
   training-app-contract-service:
     image: "training-app-contract-service:1.0"
-    cpu_shares: 2
     depends_on:
+      training-app-kafka-service:
+        condition: service_healthy
       training-app-contract-service-db:
         condition: service_healthy
     environment:
@@ -48,10 +49,12 @@ services:
       AUDITLOG_SERVICE_API_HOST: training-app-auditlog-service
       SERVER_PORT: 8080
       MANAGEMENT_SERVER_PORT: 8081
+      SPRING_KAFKA_BOOTSTRAPSERVERS: "http://training-app-kafka-service:9092"
+
 
   training-app-contract-service-db:
     image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    command: --innodb-use-native-aio=0 --default-authentication-plugin=caching_sha2_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
     volumes:
       - ./db-data-contract-service:/var/lib/mysql
     environment:
@@ -62,17 +65,16 @@ services:
       interval: 2s
       timeout: 120s
       retries: 10
-    ports:
-      - "3306:3306"
 
   # Contract Service End
 
   # Audit Log Service Start
-
   training-app-auditlog-service:
     image: "training-app-auditlog-service:1.0"
     cpu_shares: 2
     depends_on:
+      training-app-kafka-service:
+        condition: service_healthy
       training-app-auditlog-service-db:
         condition: service_healthy
     environment:
@@ -81,6 +83,7 @@ services:
       JAVA_OPTS: "-Duser.timezone=Europe/Athens"
       SERVER_PORT: 8080
       MANAGEMENT_SERVER_PORT: 8081
+      SPRING_KAFKA_BOOTSTRAPSERVERS: "http://training-app-kafka-service:9092"
 
   training-app-auditlog-service-db:
     image: postgres:16-alpine
@@ -100,6 +103,46 @@ services:
       - "8432:5432"
 
   # Audit Log Service End
+
+  training-app-kafka-service:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: training-app-kafka-service
+    command:
+      - redpanda
+      - start
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      # Address the broker advertises to clients that connect to the Kafka API.
+      # Use the internal addresses to connect to the Redpanda brokers'
+      # from inside the same Docker network.
+      # Use the external addresses to connect to the Redpanda brokers'
+      # from outside the Docker network.
+      - --advertise-kafka-addr internal://training-app-kafka-service:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      # Address the broker advertises to clients that connect to the HTTP Proxy.
+      - --advertise-pandaproxy-addr internal://training-app-kafka-service:8082,external://localhost:18082
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      # Redpanda brokers use the RPC API to communicate with eachother internally.
+      - --rpc-addr training-app-kafka-service:33145
+      - --advertise-rpc-addr training-app-kafka-service:33145
+      # Tells Seastar (the framework Redpanda uses under the hood) to use 1 core on the system.
+      - --smp 1
+      # The amount of memory to make available to Redpanda.
+      - --memory 1G
+      # Mode dev-container uses well-known configuration properties for development in containers.
+      - --mode dev-container
+      # enable logs for debugging.
+      - --default-log-level=debug
+    healthcheck:
+      test: [ "CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1" ]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+  #    ports:
+  #      - 9081:8081
+  #      - 9082:8082
+  #      - 9092:9092
+  #      - 9644:9644
 
   # Nginx
   nginx:

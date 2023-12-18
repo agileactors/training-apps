@@ -7,6 +7,8 @@ services:
     depends_on:
       training-app-contract-service-db:
         condition: service_healthy
+      training-app-contract-kafka-service:
+        condition: service_healthy
     environment:
       DB_HOST: training-app-contract-service-db
       DB_PORT: 3306
@@ -17,7 +19,7 @@ services:
 
   training-app-contract-service-db:
     image: mysql:8.0
-    command: --default-authentication-plugin=caching_sha2_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    command: --innodb-use-native-aio=0 --default-authentication-plugin=caching_sha2_password --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
     volumes:
       - ./db-data:/var/lib/mysql
     environment:
@@ -31,8 +33,14 @@ services:
     ports:
       - "3306:3306"
 
-  training-app-kafka-service:
+  training-app-contract-kafka-service:
     image: docker.redpanda.com/redpandadata/redpanda:latest
+    healthcheck:
+      test: [ "CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1" ]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
     ports:
       - 9081:8081
       - 9082:8082

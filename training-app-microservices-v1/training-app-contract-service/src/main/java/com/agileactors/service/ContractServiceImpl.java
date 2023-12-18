@@ -59,7 +59,7 @@ class ContractServiceImpl implements ContractService {
   }
 
   @Override
-  @Transactional
+  @Transactional("kafkaTransactionManager")
   public GetContractDto create(CreateContractRequestDto createContractRequestDto) {
     var newContract = new Contract(UUID.randomUUID(),
         createContractRequestDto.name(),

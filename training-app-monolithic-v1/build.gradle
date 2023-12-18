@@ -39,7 +39,6 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'org.flywaydb:flyway-core'
 
-
     implementation 'org.springframework.cloud:spring-cloud-sleuth-core:2.2.8.RELEASE'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus:1.12.0'
 
